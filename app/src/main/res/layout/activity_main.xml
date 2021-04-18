@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/auto_random_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:switchPadding="10dp"
+        android:text="自动上滑开关"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/openAccess"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:text="打开无障碍服务" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="上滑随机时间" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/include_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        app:switchPadding="10dp"
+        android:text="是否匹配所有关键字"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/keywords"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="关键字" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/followRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="关注比率" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/niceRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="点赞比率" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/commentRate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="评论比率" />
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/lingyongmoney"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="快手"
+        android:visibility="gone"/>
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/zhuanke"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="趣头条"
+        android:visibility="gone"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/app_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="应用列表"
+        android:visibility="gone"/>
+</LinearLayout>

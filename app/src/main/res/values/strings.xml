@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AutoSwipe</string>
+    <string name="lbl_auto_open_red_packet_desc">just random time swipe up</string>
+</resources>
