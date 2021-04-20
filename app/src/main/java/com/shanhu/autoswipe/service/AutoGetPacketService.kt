@@ -127,14 +127,15 @@ class AutoGetPacketService : BaseAccessibilityService() {
 
     private fun swipeNow(): Boolean {
         var ret = true
-        val textview = findViewByViewId("com.zhiliaoapp.musically:id/adc")
+        //val textview = findViewByViewId(MainApplication.DEFAULT_CONTENT_ID)
+        if (MainApplication.CONTENT_ID.isNullOrEmpty()) return ret
+        val textview = findViewByViewId(MainApplication.CONTENT_ID!!)
         val content = textview?.text
         Log.e(TAG, "content str: $content")
         if (content.isNullOrEmpty()) return ret
-        val keywords = SpUtil.getInstace().getString(MainApplication.KEYWORDS_SET, "")
-        val keyList = keywords?.split(" ")
+        val keyList = MainApplication.KEYWORDS?.split(" ")
         if (keyList!= null) {
-            val all = SpUtil.getInstace().getBoolean(MainApplication.INCLUDE_ALL, false)
+            val all = MainApplication.INCLUDE_ALL_VALUE
             loop@ for (keyword in keyList) {
                 if (all) {
                     if (content.contains(keyword,true)) {
@@ -156,13 +157,13 @@ class AutoGetPacketService : BaseAccessibilityService() {
 
     private fun followPraiseComment() {
         var followDelay = 0.0
-        val followId = SpUtil.getInstace().getString(MainApplication.FOLLOW_KEY, MainApplication.DEFAULT_FOLLOW_ID)
-        if (followId != null) {
+        val followId = MainApplication.FOLLOW_ID
+        if (!followId.isNullOrEmpty()) {
             handler.removeCallbacks(followBtRunable)
             val randomFollow = getRandomNum(0, 10)
             Log.e(TAG, "randomFollow == $randomFollow")
-            val followRate = SpUtil.getInstace().getString(MainApplication.KEY_FOLLOW, "8").toInt()
-            if (randomFollow > followRate) {
+
+            if (randomFollow > MainApplication.FOLLOW_RATE) {
                 followBtRunable.id = followId
                 followDelay = getRandomDouble(1.00, 4.00)
                 Log.e(TAG, "followDelay == $followDelay")
@@ -170,46 +171,44 @@ class AutoGetPacketService : BaseAccessibilityService() {
             }
         }
         var praiseDelay = 0.0
-        val praiseId = SpUtil.getInstace().getString(MainApplication.PRAISE_KEY, MainApplication.DEFAULT_PRAISE_ID)
-        if (praiseId != null) {
+        val praiseId = MainApplication.PRAISE_ID
+        if (!praiseId.isNullOrEmpty()) {
             handler.removeCallbacks(praiseBtRunable)
             val randomPraise = getRandomNum(0, 10)
             Log.e(TAG, "randomPraise == $randomPraise")
-            val niceRate = SpUtil.getInstace().getString(MainApplication.KEY_NICE, "4").toInt()
-            if (randomPraise > niceRate) {
+            if (randomPraise > MainApplication.NICE_RATE) {
                 praiseBtRunable.id = praiseId
                 praiseDelay = getRandomDouble(1.00, 4.00)
                 Log.e(TAG, "praiseDelay == $praiseDelay")
                 handler.postDelayed(praiseBtRunable, (praiseDelay * 1000).toLong())
             }
         }
-        val commentId = SpUtil.getInstace().getString(MainApplication.COMMENT_KEY, MainApplication.DEFAULT_COMMENT_ID)
-        if (commentId != null) {
+        val commentId = MainApplication.COMMENT_ID
+        if (!commentId.isNullOrEmpty()) {
             handler.removeCallbacks(commentBtRunable)
             handler.removeCallbacks(commentEditBtRunable)
             handler.removeCallbacks(commentSendBtRunable)
             handler.removeCallbacks(commentClsoeBtRunable)
             val randomComment = getRandomNum(0, 10)
             Log.e(TAG, "randomComment == $randomComment")
-            val commentRate = SpUtil.getInstace().getString(MainApplication.KEY_COMMENT, "7").toInt()
-            if (randomComment > commentRate) {
+            if (randomComment > MainApplication.COMMENT_RATE) {
                 val actionDelay = getRandomDouble(1.00, 3.00)
                 val totoalDelay = followDelay+praiseDelay+actionDelay
                 if (swipeRandomTime- totoalDelay> 7) {
                     Log.e(TAG, "commentDelay == $actionDelay totoalDelay == $totoalDelay")
                     commentBtRunable.id = commentId
                     handler.postDelayed(commentBtRunable, (totoalDelay * 1000).toLong())
-                    val commentEditBtId = SpUtil.getInstace().getString(MainApplication.COMMENT_EDIT_KEY, MainApplication.DEFAULT_EDIT_ID)
+                    val commentEditBtId = MainApplication.EDITEXT_ID
                     commentEditBtRunable.id = commentEditBtId
                     val randomDelay1 = getRandomDouble(2.90, 3.50)
                     handler.postDelayed(commentEditBtRunable, ((totoalDelay+randomDelay1) * 1000).toLong())
 
-                    val commentSendBtId = SpUtil.getInstace().getString(MainApplication.COMMENT_SEND_KEY, MainApplication.DEFAULT_SEND_ID)
+                    val commentSendBtId = MainApplication.SEND_ID
                     commentSendBtRunable.id = commentSendBtId
                     val randomDelay2 = getRandomDouble(4.00, 4.50)
                     handler.postDelayed(commentSendBtRunable, ((totoalDelay+randomDelay2) * 1000).toLong())
 
-                    val commentCloseBtId = SpUtil.getInstace().getString(MainApplication.COMMENT_CLOSE_KEY, MainApplication.COMMENT_CLOSE_ID)
+                    val commentCloseBtId = MainApplication.CLOSE_ID
                     commentClsoeBtRunable.id = commentCloseBtId
                     val randomDelay3 = getRandomDouble(5.00, 5.50)
                     handler.postDelayed(commentClsoeBtRunable, ((totoalDelay+randomDelay3) * 1000).toLong())
