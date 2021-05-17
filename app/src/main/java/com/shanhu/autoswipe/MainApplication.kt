@@ -46,7 +46,7 @@ class MainApplication : Application() {
         var KEYWORDS: String? = ""
         var INCLUDE_ALL_VALUE : Boolean = false
 
-        const val DEFAULT_CONTENT_ID: String = "com.zhiliaoapp.musically:id/adr"
+        const val DEFAULT_CONTENT_ID: String = "com.zhiliaoapp.musically:id/adz"
 
         @JvmField
         var AUTO_PLAY: String = "AUTO_PLAY"
@@ -56,24 +56,24 @@ class MainApplication : Application() {
 
         @JvmField
         var PRAISE_KEY: String = "PRAISE_KEY"
-        const val DEFAULT_PRAISE_ID: String = "com.zhiliaoapp.musically:id/af_"
+        const val DEFAULT_PRAISE_ID: String = "com.zhiliaoapp.musically:id/afh"
 
         @JvmField
         var FOLLOW_KEY: String = "FOLLOW_KEY"
-        const val DEFAULT_FOLLOW_ID: String = "com.zhiliaoapp.musically:id/ay_"
+        const val DEFAULT_FOLLOW_ID: String = "com.zhiliaoapp.musically:id/ayx"
 
         @JvmField
         var COMMENT_KEY: String = "COMMENT_KEY"
-        const val DEFAULT_COMMENT_ID: String = "com.zhiliaoapp.musically:id/a5g"
+        const val DEFAULT_COMMENT_ID: String = "com.zhiliaoapp.musically:id/a5n"
 
         var COMMENT_EDIT_KEY: String = "COMMENT_EDIT_KEY"
-        const val DEFAULT_EDIT_ID: String = "com.zhiliaoapp.musically:id/a5k"
+        const val DEFAULT_EDIT_ID: String = "com.zhiliaoapp.musically:id/a5r"
 
         var COMMENT_SEND_KEY: String = "COMMENT_SEND_KEY"
-        const val DEFAULT_SEND_ID: String = "com.zhiliaoapp.musically:id/a67"
+        const val DEFAULT_SEND_ID: String = "com.zhiliaoapp.musically:id/a6d"
 
         var COMMENT_CLOSE_KEY: String = "COMMENT_CLOSE_KEY"
-        const val COMMENT_CLOSE_ID: String = "com.zhiliaoapp.musically:id/nf"
+        const val COMMENT_CLOSE_ID: String = "com.zhiliaoapp.musically:id/nj"
 
         const val RESET_TIME_ACTION: String = "RESET_TIME_ACTION"
         const val TIME_SET: String = "TIME_SET"
@@ -84,5 +84,12 @@ class MainApplication : Application() {
         const val KEY_FOLLOW: String = "KEY_FOLLOW"
         const val KEY_NICE: String = "KEY_NICE"
         const val KEY_COMMENT: String = "KEY_COMMENT"
+
+//        const val DEFAULT_PRAISE_ID: String = "com.zhiliaoapp.musically:id/aev"
+//        const val DEFAULT_FOLLOW_ID: String = "com.zhiliaoapp.musically:id/axn"
+//        const val DEFAULT_COMMENT_ID: String = "com.zhiliaoapp.musically:id/a52"
+//        const val DEFAULT_EDIT_ID: String = "com.zhiliaoapp.musically:id/a56"
+//        const val DEFAULT_SEND_ID: String = "com.zhiliaoapp.musically:id/a5r"
+//        const val COMMENT_CLOSE_ID: String = "com.zhiliaoapp.musically:id/n9"
     }
 }

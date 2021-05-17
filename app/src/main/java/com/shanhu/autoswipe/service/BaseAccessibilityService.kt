@@ -19,6 +19,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityManager
 import android.view.accessibility.AccessibilityNodeInfo
+import com.shanhu.autoswipe.MainApplication
 import java.util.*
 import kotlin.math.abs
 
@@ -263,11 +264,12 @@ open class BaseAccessibilityService : AccessibilityService(), IAccessbilityActio
     override fun findViewByViewId(viewId: String, clickable: Boolean): AccessibilityNodeInfo? {
         val accessibilityNodeInfo = rootInActiveWindow ?: return null
         val nodeInfoList = accessibilityNodeInfo.findAccessibilityNodeInfosByViewId(viewId)
-        if ("com.zhiliaoapp.musically:id/n9".equals(viewId,true)) {
-            return if (nodeInfoList.size == 2) {
-                nodeInfoList[1]
-            } else {
-                null
+        if (MainApplication.CLOSE_ID?.equals(viewId,true) == true) {
+            if (nodeInfoList.size == 2) {
+                val nodeInfo = nodeInfoList[1]
+                if (nodeInfo != null && nodeInfo.isClickable == clickable && nodeInfo.isVisibleToUser) {
+                    return nodeInfo
+                }
             }
         }
         if (nodeInfoList != null && nodeInfoList.isNotEmpty()) {

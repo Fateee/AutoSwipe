@@ -73,15 +73,19 @@ class SetDialog : Dialog {
                 }
                 1 -> {
                     SpUtil.getInstace().save(MainApplication.KEYWORDS_SET, value)
+                    MainApplication.KEYWORDS = value
                 }
                 2 -> {
                     SpUtil.getInstace().save(MainApplication.KEY_FOLLOW, value)
+                    MainApplication.FOLLOW_RATE = value?.toInt()?:8
                 }
                 3 -> {
                     SpUtil.getInstace().save(MainApplication.KEY_NICE, value)
+                    MainApplication.NICE_RATE = value?.toInt()?:4
                 }
                 4 -> {
                     SpUtil.getInstace().save(MainApplication.KEY_COMMENT, value)
+                    MainApplication.COMMENT_RATE = value?.toInt()?:7
                 }
             }
             dismiss()

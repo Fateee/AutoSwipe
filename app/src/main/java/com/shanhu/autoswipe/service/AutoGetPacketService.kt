@@ -79,7 +79,7 @@ class AutoGetPacketService : BaseAccessibilityService() {
                     dispatchGesture(true, "小视频")
                     isSwiped = true
                     if (SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)) {
-                        val randomTime = getRandomNum(2, 5)
+                        val randomTime = getRandomDouble(1.50, 3.00)
                         postDelayed({ swipeDelay() }, (randomTime*1000).toLong())
                     } else {
                         startVideo = false
