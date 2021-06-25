@@ -13,7 +13,7 @@ class MainApplication : Application() {
         super.onCreate()
         mAppContext = this
         registerActivityLifecycleCallbacks(DefaultActivityLifecycle())
-        CONTENT_ID = DEFAULT_CONTENT_ID
+        CONTENT_ID = SpUtil.getInstace().getString(CONTENT_KEY, DEFAULT_CONTENT_ID)
         FOLLOW_ID = SpUtil.getInstace().getString(FOLLOW_KEY, DEFAULT_FOLLOW_ID)
         PRAISE_ID = SpUtil.getInstace().getString(PRAISE_KEY, DEFAULT_PRAISE_ID)
         COMMENT_ID = SpUtil.getInstace().getString(COMMENT_KEY, DEFAULT_COMMENT_ID)
@@ -46,7 +46,9 @@ class MainApplication : Application() {
         var KEYWORDS: String? = ""
         var INCLUDE_ALL_VALUE : Boolean = false
 
-        const val DEFAULT_CONTENT_ID: String = "com.zhiliaoapp.musically:id/adz"
+        @JvmField
+        var CONTENT_KEY: String = "CONTENT_KEY"
+        const val DEFAULT_CONTENT_ID: String = "com.zhiliaoapp.musically:id/ae0"
 
         @JvmField
         var AUTO_PLAY: String = "AUTO_PLAY"
@@ -56,24 +58,24 @@ class MainApplication : Application() {
 
         @JvmField
         var PRAISE_KEY: String = "PRAISE_KEY"
-        const val DEFAULT_PRAISE_ID: String = "com.zhiliaoapp.musically:id/afh"
+        const val DEFAULT_PRAISE_ID: String = "com.zhiliaoapp.musically:id/afj"
 
         @JvmField
         var FOLLOW_KEY: String = "FOLLOW_KEY"
-        const val DEFAULT_FOLLOW_ID: String = "com.zhiliaoapp.musically:id/ayx"
+        const val DEFAULT_FOLLOW_ID: String = "com.zhiliaoapp.musically:id/ayu"
 
         @JvmField
         var COMMENT_KEY: String = "COMMENT_KEY"
-        const val DEFAULT_COMMENT_ID: String = "com.zhiliaoapp.musically:id/a5n"
+        const val DEFAULT_COMMENT_ID: String = "com.zhiliaoapp.musically:id/a5p"
 
         var COMMENT_EDIT_KEY: String = "COMMENT_EDIT_KEY"
-        const val DEFAULT_EDIT_ID: String = "com.zhiliaoapp.musically:id/a5r"
+        const val DEFAULT_EDIT_ID: String = "com.zhiliaoapp.musically:id/a5t"
 
         var COMMENT_SEND_KEY: String = "COMMENT_SEND_KEY"
-        const val DEFAULT_SEND_ID: String = "com.zhiliaoapp.musically:id/a6d"
+        const val DEFAULT_SEND_ID: String = "com.zhiliaoapp.musically:id/a6f"
 
         var COMMENT_CLOSE_KEY: String = "COMMENT_CLOSE_KEY"
-        const val COMMENT_CLOSE_ID: String = "com.zhiliaoapp.musically:id/nj"
+        const val COMMENT_CLOSE_ID: String = "com.zhiliaoapp.musically:id/n_"
 
         const val RESET_TIME_ACTION: String = "RESET_TIME_ACTION"
         const val TIME_SET: String = "TIME_SET"
