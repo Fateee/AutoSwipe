@@ -31,6 +31,11 @@ class MainApplication : Application() {
 
     companion object {
 
+        //0 上滑  1 左滑（微信读书）
+        var DIRECTION: Int = 0
+
+        //打开立即滑动吗？
+        var OPEN_SCROLL_NOW: Boolean = true
         var CONTENT_ID: String? = null
         var FOLLOW_ID: String? = null
         var PRAISE_ID: String? = null

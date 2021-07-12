@@ -78,7 +78,35 @@ open class BaseAccessibilityService : AccessibilityService(), IAccessbilityActio
     var random = Random()
 
     @JvmOverloads
-    fun dispatchGesture(up: Boolean, name: String = "") {
+    fun dispatchGesture(up: Int, name: String = "") {
+        scroll(up)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val randomTime = getRandomNum(400, 700)
+            Log.e(TAG, "swipe now randomTime  $randomTime")
+            sd = StrokeDescription(path, 0, randomTime.toLong())
+            gesture = GestureDescription.Builder().addStroke(sd!!).build()
+            //先横滑
+            dispatchGesture(gesture!!, null, null)
+            path.reset()
+        } else {
+            if (TextUtils.isEmpty(name)) return
+            val accessibilityNodeInfo = rootInActiveWindow
+            click(accessibilityNodeInfo, name)
+        }
+    }
+
+    private fun scroll(direction: Int) {
+        when(direction) {
+            0 -> {
+                scrollUp(true)
+            }
+            1 -> {
+                scrollLeft(true)
+            }
+        }
+    }
+
+    private fun scrollUp(up: Boolean) {
         val randomX1 = getRandomDouble(0.33, 0.75)
         val randomY1 = getRandomDouble(0.79, 0.92)
         val randomX2 = getRandomDouble(0.35, 0.80)
@@ -103,19 +131,33 @@ open class BaseAccessibilityService : AccessibilityService(), IAccessbilityActio
 
 //        path.lineTo((float) x2, (float) y2);
         Log.e(TAG, "dispatchGesture x1 = $x1 y1 = $y1 controlx = $controlX controly = $controlY x2 = $x2 y2 = $y2")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val randomTime = getRandomNum(400, 700)
-            Log.e(TAG, "swipe now randomTime  $randomTime")
-            sd = StrokeDescription(path, 0, randomTime.toLong())
-            gesture = GestureDescription.Builder().addStroke(sd!!).build()
-            //先横滑
-            dispatchGesture(gesture!!, null, null)
-            path.reset()
-        } else {
-            if (TextUtils.isEmpty(name)) return
-            val accessibilityNodeInfo = rootInActiveWindow
-            click(accessibilityNodeInfo, name)
+    }
+
+    private fun scrollLeft(up: Boolean) {
+        val randomX1 = getRandomDouble(0.33, 0.75)
+        val randomY1 = getRandomDouble(0.79, 0.92)
+        val randomX2 = getRandomDouble(0.35, 0.80)
+        val randomY2 = getRandomDouble(0.05, 0.18)
+        Log.e(TAG, "dispatchGesture  $randomX1  $randomY1  $randomX2 $randomY2")
+        if (realWidth == 0 || realHeight == 0) {
+            getPingMuSize(applicationContext)
         }
+        val x1 = realWidth * randomY1
+        val y1 = realHeight * randomX1
+        val controlX = getRandomNum(100, 150) + x1
+        val controlY = y1 - getRandomNum(100, 150)
+        val x2 = realWidth * randomY2
+        val y2 = realHeight * randomX2
+        if (up) {
+            path.moveTo(x1.toFloat(), y1.toFloat())
+            path.quadTo(controlX.toFloat(), controlY.toFloat(), x2.toFloat(), y2.toFloat())
+        } else {
+            path.moveTo(x2.toFloat(), y2.toFloat())
+            path.quadTo(controlX.toFloat(), controlY.toFloat(), x1.toFloat(), y1.toFloat())
+        }
+
+//        path.lineTo((float) x2, (float) y2);
+        Log.e(TAG, "dispatchGesture x1 = $x1 y1 = $y1 controlx = $controlX controly = $controlY x2 = $x2 y2 = $y2")
     }
 
     fun click(paramAccessibilityNodeInfo: AccessibilityNodeInfo?, name: String) {
@@ -192,53 +234,53 @@ open class BaseAccessibilityService : AccessibilityService(), IAccessbilityActio
         }
     }
 
-    fun mockDoubleClick(){
-        val path = Path().apply {
-            moveTo((realWidth/2).toFloat(), (realHeight/2).toFloat())
-        }
-        val secondPath = Path().apply {
-            moveTo((realWidth/2).toFloat(), (realHeight/2).toFloat())
-        }
-//        val rightThenDownDrag = StrokeDescription(
-//            path,
-//            0L,
-//            1,
-//            true
-//        ).apply {
-//            continueStroke(secondPath, 1, 1, false)
+//    fun mockDoubleClick(){
+//        val path = Path().apply {
+//            moveTo((realWidth/2).toFloat(), (realHeight/2).toFloat())
 //        }
-        val first = StrokeDescription(path,0,100,true)
-        val builder = GestureDescription.Builder()
-        val gestureDescription = builder.addStroke(first).build()
-        dispatchGesture(gestureDescription, object : GestureResultCallback() {
-            override fun onCompleted(gestureDescription: GestureDescription?) {
-                super.onCompleted(gestureDescription)
-//                val path2 = Path()
-//                path2.moveTo((realWidth/2).toFloat(), (realHeight/2).toFloat())
-                val builder2 = GestureDescription.Builder()
-                val gestureDescription2 = builder2.addStroke(StrokeDescription(secondPath,0,100)).build()
-                dispatchGesture(gestureDescription2,object : GestureResultCallback() {
-                    override fun onCompleted(gestureDescription: GestureDescription?) {
-                        super.onCompleted(gestureDescription)
-                        Log.e(TAG,"double click222 finish.....")
-                    }
-
-                    override fun onCancelled(gestureDescription: GestureDescription?) {
-                        super.onCancelled(gestureDescription)
-                        Log.e(TAG,"double click2222 onCancelled.....")
-                    }
-                },null)
-                Log.e(TAG,"double click finish.....")
-                path.close()
-//                path2.close()
-            }
-
-            override fun onCancelled(gestureDescription: GestureDescription?) {
-                super.onCancelled(gestureDescription)
-                Log.e(TAG,"double click onCancelled.....")
-            }
-        },null)
-    }
+//        val secondPath = Path().apply {
+//            moveTo((realWidth/2).toFloat(), (realHeight/2).toFloat())
+//        }
+////        val rightThenDownDrag = StrokeDescription(
+////            path,
+////            0L,
+////            1,
+////            true
+////        ).apply {
+////            continueStroke(secondPath, 1, 1, false)
+////        }
+//        val first = StrokeDescription(path,0,100,true)
+//        val builder = GestureDescription.Builder()
+//        val gestureDescription = builder.addStroke(first).build()
+//        dispatchGesture(gestureDescription, object : GestureResultCallback() {
+//            override fun onCompleted(gestureDescription: GestureDescription?) {
+//                super.onCompleted(gestureDescription)
+////                val path2 = Path()
+////                path2.moveTo((realWidth/2).toFloat(), (realHeight/2).toFloat())
+//                val builder2 = GestureDescription.Builder()
+//                val gestureDescription2 = builder2.addStroke(StrokeDescription(secondPath,0,100)).build()
+//                dispatchGesture(gestureDescription2,object : GestureResultCallback() {
+//                    override fun onCompleted(gestureDescription: GestureDescription?) {
+//                        super.onCompleted(gestureDescription)
+//                        Log.e(TAG,"double click222 finish.....")
+//                    }
+//
+//                    override fun onCancelled(gestureDescription: GestureDescription?) {
+//                        super.onCancelled(gestureDescription)
+//                        Log.e(TAG,"double click2222 onCancelled.....")
+//                    }
+//                },null)
+//                Log.e(TAG,"double click finish.....")
+//                path.close()
+////                path2.close()
+//            }
+//
+//            override fun onCancelled(gestureDescription: GestureDescription?) {
+//                super.onCancelled(gestureDescription)
+//                Log.e(TAG,"double click onCancelled.....")
+//            }
+//        },null)
+//    }
 
     override fun findViewByText(text: String): AccessibilityNodeInfo? {
         return findViewByText(text, false)

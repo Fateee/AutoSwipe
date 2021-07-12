@@ -76,7 +76,7 @@ class AutoGetPacketService : BaseAccessibilityService() {
 //                    if (componentName?.equals(TIK_TOK) == true) {
 //                        dispatchGesture(true, "小视频")
 //                    }
-                    dispatchGesture(true, "小视频")
+                    dispatchGesture(MainApplication.DIRECTION, "小视频")
                     isSwiped = true
                     if (SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)) {
                         val randomTime = getRandomDouble(1.50, 3.00)
@@ -102,6 +102,12 @@ class AutoGetPacketService : BaseAccessibilityService() {
                     swipeDelay()
                 }
             }
+            else -> {
+                startVideo = SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)
+                if (startVideo) {
+                    swipeDelay()
+                }
+            }
         }
     }
 
@@ -113,13 +119,15 @@ class AutoGetPacketService : BaseAccessibilityService() {
         handler.removeCallbacksAndMessages(null)
         if (isSwiped) {
             isSwiped = false
-            if (swipeNow()) {
+            if (swipeNow()&& MainApplication.OPEN_SCROLL_NOW) {
                 handler.sendEmptyMessage(AUTO_RANDOM_PLAY)
             } else {
                 swipeRandomTime = SpUtil.getInstace().getString(MainApplication.TIME_SET, "15").toInt()
                 swipeRandomTime = getRandomNum(swipeRandomTime-2, swipeRandomTime + 6)
                 Log.e(TAG, "swipeRandomTime: $swipeRandomTime")
-                followPraiseComment()
+                if (MainApplication.OPEN_SCROLL_NOW) {
+                    followPraiseComment()
+                }
                 handler.sendEmptyMessageDelayed(AUTO_RANDOM_PLAY, (swipeRandomTime * 1000).toLong())
             }
         }
