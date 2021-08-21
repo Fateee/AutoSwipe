@@ -14,6 +14,7 @@ import com.shanhu.autoswipe.MainApplication
 import com.shanhu.autoswipe.util.ForegroundAppUtil
 import com.shanhu.autoswipe.util.RunningTaskUtil
 import com.shanhu.autoswipe.util.SpUtil
+import java.lang.Exception
 
 /**
  * @author donghailong
@@ -230,5 +231,14 @@ class AutoGetPacketService : BaseAccessibilityService() {
     companion object {
         private const val TAG = "AutoGetPacketService"
         const val AUTO_RANDOM_PLAY = 902
+    }
+
+    fun getFollowerView() {
+        try {
+            val followNode = rootInActiveWindow.getChild(0).getChild(0).getChild(4)
+            performViewClick(followNode)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
     }
 }
