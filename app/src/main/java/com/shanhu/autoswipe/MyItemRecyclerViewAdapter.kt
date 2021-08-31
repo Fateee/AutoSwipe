@@ -8,6 +8,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 
 import com.shanhu.autoswipe.dummy.DummyContent.DummyItem
+import com.shanhu.autoswipe.service.AutoGetPacketService
 
 
 class MyItemRecyclerViewAdapter(
@@ -22,8 +23,15 @@ class MyItemRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
-        holder.itemName.isChecked = item.checked
+        holder.itemName.isChecked = AutoGetPacketService.autoGetTheirFans
         holder.itemName.text = item.content
+        when(item.content) {
+            "批量关注他人粉丝" -> {
+                holder.itemName.setOnCheckedChangeListener { _, isChecked ->
+                    AutoGetPacketService.autoGetTheirFans = isChecked
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int = values.size

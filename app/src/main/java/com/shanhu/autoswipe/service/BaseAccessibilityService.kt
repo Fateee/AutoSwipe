@@ -446,6 +446,10 @@ open class BaseAccessibilityService : AccessibilityService(), IAccessbilityActio
         }
     }
 
+    fun getRoot(): AccessibilityNodeInfo? {
+        return rootInActiveWindow
+    }
+
     override fun performInputText(info: AccessibilityNodeInfo, text: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             val arguments = Bundle()

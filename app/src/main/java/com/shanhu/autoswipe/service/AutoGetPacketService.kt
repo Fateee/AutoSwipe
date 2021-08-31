@@ -9,21 +9,20 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.shanhu.autoswipe.Consts
 import com.shanhu.autoswipe.MainApplication
-import com.shanhu.autoswipe.util.ForegroundAppUtil
 import com.shanhu.autoswipe.util.RunningTaskUtil
 import com.shanhu.autoswipe.util.SpUtil
+import com.shanhu.autoswipe.util.ToastUtil
 import java.lang.Exception
 
 /**
  * @author donghailong
  */
 class AutoGetPacketService : BaseAccessibilityService() {
-    private val TIK_TOK = "com.zhiliaoapp.musically"
     private var swipeRandomTime: Int = 15
     private var isSwiped = true
-    var startVideo = false
+    var followedCount = 0
     private var taskUtil = RunningTaskUtil()
     var stringArray:Array<String> = arrayOf("so cute", "cute", "awe","....","wawaha","hhhhh","cool","so cool","awesome","sooo cute",
             "omg","oh my god","omgomg","oh my god","omgoh my god","oh no","oh...","...no",".yep.","ohmy")
@@ -83,7 +82,7 @@ class AutoGetPacketService : BaseAccessibilityService() {
                         val randomTime = getRandomDouble(1.50, 3.00)
                         postDelayed({ swipeDelay() }, (randomTime*1000).toLong())
                     } else {
-                        startVideo = false
+                        autoWatchVideo = false
                     }
                 }
             }
@@ -94,18 +93,26 @@ class AutoGetPacketService : BaseAccessibilityService() {
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         val pkg = event.packageName
         Log.i(TAG, "event pkg:" + pkg + " event type:" + event.eventType)
-        if (TextUtils.isEmpty(pkg) || startVideo) return
+        if (TextUtils.isEmpty(pkg) || autoWatchVideo) return
         if (pkg == "com.shanhu.autoswipe") return
         when (pkg.toString()) {
             TIK_TOK -> {
-                startVideo = SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)
-                if (startVideo) {
+                autoWatchVideo = SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)
+                if (autoWatchVideo) {
                     swipeDelay()
+                }
+                if (autoGetTheirFans) {
+                    Thread.sleep(FOLLOW_DELAY*1000L)
+                    getFollowerList()
+                    Log.e("follow","before followTheirFollower")
+                    Thread.sleep(FOLLOW_DELAY*1000L)
+                    Log.e("follow","after followTheirFollower")
+                    followTheirFollower()
                 }
             }
             else -> {
-                startVideo = SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)
-                if (startVideo) {
+                autoWatchVideo = SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)
+                if (autoWatchVideo) {
                     swipeDelay()
                 }
             }
@@ -131,6 +138,77 @@ class AutoGetPacketService : BaseAccessibilityService() {
                 }
                 handler.sendEmptyMessageDelayed(AUTO_RANDOM_PLAY, (swipeRandomTime * 1000).toLong())
             }
+        }
+    }
+
+    private fun getFollowerList() {
+        try {
+            val horList = getRoot()?.getChild(2)
+            val followerTab = horList?.getChild(1)
+            followerTab?.let {
+                performViewClick(followerTab)
+            }
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun followTheirFollower() {
+        if (followedCount >= TOTAL_FOLLOW_COUNT) {
+            autoGetTheirFans = false
+//            ToastUtil.show("自动关注完毕，已自动关注${followedCount}人")
+            Log.e("follow","自动关注完毕，已自动关注${followedCount}人")
+            return
+        }
+        try {
+            val vp = getRoot()?.getChild(3)
+            val rv = vp?.getChild(1)
+            rv?.let {
+                for (i in 0 until it.childCount) {
+                    if (followedCount >= TOTAL_FOLLOW_COUNT) {
+                        autoGetTheirFans = false
+//                        ToastUtil.show("自动关注完毕，已自动关注${followedCount}人")
+                        Log.e("follow","..自动关注完毕，已自动关注${followedCount}人")
+                        return
+                    }
+                    val item = it.getChild(i)
+                    item?.let { ii->
+                        if (ii.childCount>2) {
+                            val followUserNameTV = ii.getChild(0)
+                            val followTV = ii.getChild(2)
+                            Log.e("follow","FOLLOWED_SET == "+Consts.FOLLOWED_SET)
+                            if (followUserNameTV != null && followTV != null) {
+                                val userNameTxt = followUserNameTV.text
+                                val followTxt = followTV.text
+                                if (!Consts.FOLLOWED_SET.contains(userNameTxt)) {
+                                    followTxt?.let { value ->
+                                        if ("Follow".endsWith(value,true)) {
+                                            performViewClick(followTV)
+                                            followedCount++
+//                                            ToastUtil.show("已自动关注${followedCount}人")
+                                            Log.e("follow","before sleep")
+                                            Consts.FOLLOWED_SET.add(userNameTxt.toString())
+                                            Consts.KV?.encode(Consts.FOLLOWED_SET_KEY,Consts.FOLLOWED_SET)
+                                            Thread.sleep(FOLLOW_DELAY*1000L)
+                                            Log.e("follow","after sleep")
+                                        }
+                                    }
+                                } else {
+                                    Log.e("follow","already followed")
+                                }
+                            }
+                        }
+                    }
+                }
+                //上滑
+                Log.e("follow","before scroll")
+                dispatchGesture(MainApplication.DIRECTION, "小视频")
+                Thread.sleep(FOLLOW_DELAY*1000L)
+                Log.e("follow","after scroll")
+                followTheirFollower()
+            }
+        } catch (e : Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -231,6 +309,11 @@ class AutoGetPacketService : BaseAccessibilityService() {
     companion object {
         private const val TAG = "AutoGetPacketService"
         const val AUTO_RANDOM_PLAY = 902
+        var autoWatchVideo = false
+        var autoGetTheirFans = false
+        val TIK_TOK = "com.zhiliaoapp.musically"
+        var TOTAL_FOLLOW_COUNT = 100
+        var FOLLOW_DELAY = 5
     }
 
     fun getFollowerView() {

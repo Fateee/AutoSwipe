@@ -2,7 +2,10 @@ package com.shanhu.autoswipe
 
 import android.app.Activity
 import android.app.Application
+import android.util.Log
+import com.shanhu.autoswipe.service.AutoGetPacketService
 import com.shanhu.autoswipe.util.SpUtil
+import com.tencent.mmkv.MMKV
 
 class MainApplication : Application() {
 
@@ -12,6 +15,14 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         mAppContext = this
+        val rootDir = MMKV.initialize(this)
+        println("mmkv root: $rootDir")
+        Consts.KV = MMKV.defaultMMKV()
+        Consts.FOLLOWED_SET = Consts.KV?.decodeStringSet(Consts.FOLLOWED_SET_KEY,HashSet()) as HashSet<String?>
+        Log.e("MainApplication","FOLLOWED_SET == "+Consts.FOLLOWED_SET)
+        AutoGetPacketService.TOTAL_FOLLOW_COUNT = Consts.KV?.decodeInt(Consts.TOTAL_FOLLOW_COUNT,AutoGetPacketService.TOTAL_FOLLOW_COUNT)?:AutoGetPacketService.TOTAL_FOLLOW_COUNT
+        AutoGetPacketService.FOLLOW_DELAY = Consts.KV?.decodeInt(Consts.FOLLOW_DELAY,AutoGetPacketService.FOLLOW_DELAY)?:AutoGetPacketService.FOLLOW_DELAY
+
         registerActivityLifecycleCallbacks(DefaultActivityLifecycle())
         CONTENT_ID = SpUtil.getInstace().getString(CONTENT_KEY, DEFAULT_CONTENT_ID)
         FOLLOW_ID = SpUtil.getInstace().getString(FOLLOW_KEY, DEFAULT_FOLLOW_ID)
