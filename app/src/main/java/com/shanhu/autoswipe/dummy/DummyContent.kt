@@ -36,6 +36,7 @@ object DummyContent {
         addItem(DummyItem(false, "批量转发聊天内容"))
 
         val items = LinkedHashMap<String,String>()
+        items["他人主页链接"] = Consts.KV?.decodeString(Consts.TARGET_PROFILE_LINKS,"") ?: ""
         items["关注数量"] = Consts.KV?.decodeInt(Consts.TOTAL_FOLLOW_COUNT,AutoGetPacketService.TOTAL_FOLLOW_COUNT).toString()
         items["间隔秒数"] = Consts.KV?.decodeInt(Consts.FOLLOW_DELAY,AutoGetPacketService.FOLLOW_DELAY).toString()
         val maps = HashMap<String,LinkedHashMap<String,String>>()

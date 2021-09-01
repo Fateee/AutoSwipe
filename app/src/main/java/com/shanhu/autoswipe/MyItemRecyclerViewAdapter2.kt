@@ -10,6 +10,7 @@ import android.widget.TextView
 
 import com.shanhu.autoswipe.dummy.DummyContent.DummyItem
 import com.shanhu.autoswipe.service.AutoGetPacketService
+import com.shanhu.autoswipe.util.CollectionUtils
 import com.shanhu.autoswipe.util.SpUtil
 import kotlinx.android.synthetic.main.item_config.view.*
 
@@ -48,7 +49,12 @@ class MyItemRecyclerViewAdapter2(
                             }
 
                             override fun afterTextChanged(s: Editable?) {
+                                val strValue = s?.toString() ?:""
                                 when(key1) {
+                                    "他人主页链接" -> {
+                                        Consts.TARGET_PROFILE_LINKS_LIST = CollectionUtils.string2Array(strValue)
+                                        Consts.KV?.encode(Consts.TARGET_PROFILE_LINKS,strValue)
+                                    }
                                     "关注数量" -> {
                                         AutoGetPacketService.TOTAL_FOLLOW_COUNT = s?.toString()?.toInt()?:100
                                         Consts.KV?.encode(Consts.TOTAL_FOLLOW_COUNT,AutoGetPacketService.TOTAL_FOLLOW_COUNT)

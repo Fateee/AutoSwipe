@@ -1,6 +1,8 @@
 package com.shanhu.autoswipe.service
 
+import android.annotation.SuppressLint
 import android.content.*
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
@@ -8,13 +10,19 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.lzf.easyfloat.EasyFloat
 import com.shanhu.autoswipe.Consts
 import com.shanhu.autoswipe.MainApplication
+import com.shanhu.autoswipe.R
 import com.shanhu.autoswipe.util.RunningTaskUtil
 import com.shanhu.autoswipe.util.SpUtil
+import com.shanhu.autoswipe.util.ThreadManager
 import com.shanhu.autoswipe.util.ToastUtil
 import java.lang.Exception
+import java.util.*
 
 /**
  * @author donghailong
@@ -22,7 +30,6 @@ import java.lang.Exception
 class AutoGetPacketService : BaseAccessibilityService() {
     private var swipeRandomTime: Int = 15
     private var isSwiped = true
-    var followedCount = 0
     private var taskUtil = RunningTaskUtil()
     var stringArray:Array<String> = arrayOf("so cute", "cute", "awe","....","wawaha","hhhhh","cool","so cool","awesome","sooo cute",
             "omg","oh my god","omgomg","oh my god","omgoh my god","oh no","oh...","...no",".yep.","ohmy")
@@ -101,13 +108,21 @@ class AutoGetPacketService : BaseAccessibilityService() {
                 if (autoWatchVideo) {
                     swipeDelay()
                 }
-                if (autoGetTheirFans) {
-                    Thread.sleep(FOLLOW_DELAY*1000L)
-                    getFollowerList()
-                    Log.e("follow","before followTheirFollower")
-                    Thread.sleep(FOLLOW_DELAY*1000L)
-                    Log.e("follow","after followTheirFollower")
-                    followTheirFollower()
+                if (autoGetTheirFans && autoGetTheirFansJobFlag == 0) {
+                    autoGetTheirFansJobFlag = 1
+                    ThreadManager.get().execute {
+//                        addLogToTv("开始执行任务")
+                        if (autoGetTheirFansJobFlag > 1) return@execute
+                        openProfile()
+                        delay()
+                        getFollowerList()
+                        Log.e("follow", "before sleep followTheirFollower")
+                        delay()
+                        Log.e("follow", "after sleep followTheirFollower")
+                        followTheirFollower()
+                        Log.e("follow", "all done followTheirFollower")
+                        autoGetTheirFansJobFlag = 2
+                    }
                 }
             }
             else -> {
@@ -117,6 +132,23 @@ class AutoGetPacketService : BaseAccessibilityService() {
                 }
             }
         }
+    }
+
+    private fun delay() {
+        Thread.sleep(FOLLOW_DELAY * 1000L)
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun addLogToTv(str: String?) {
+//        Consts.FLOAT_TV?.let {
+//            it.text = it.text?.toString()+str+"\n"
+//        }
+        Consts.TEMP_STR = str
+        sendBroadcast(Intent(Consts.LOG_ACTION))
+//        val tv = EasyFloat.getAppFloatView("ab")?.findViewById<TextView>(R.id.logTv)
+//        tv?.let {
+//            it.text = it.text?.toString()+str+"\n"
+//        }
     }
 
     override fun onServiceDisconnected() {
@@ -141,12 +173,31 @@ class AutoGetPacketService : BaseAccessibilityService() {
         }
     }
 
+    fun openProfile() {
+        if (Consts.TARGET_PROFILE_LINKS_LIST.isNullOrEmpty()) return
+        val rnd = Random().nextInt(Consts.TARGET_PROFILE_LINKS_LIST!!.size)
+        val url = Consts.TARGET_PROFILE_LINKS_LIST!![rnd]
+        Log.e(TAG, "url: $url")
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        MainApplication.mAppContext?.let {
+            ContextCompat.startActivity(it,intent,null)
+        }
+    }
+
     private fun getFollowerList() {
         try {
+            val profileFollowersBt = getRoot()?.getChild(0)?.getChild(4)
+            profileFollowersBt?.let {
+                performViewClick(profileFollowersBt)
+                addLogToTv("点击进入粉丝页面")
+            }
+            delay()
             val horList = getRoot()?.getChild(2)
             val followerTab = horList?.getChild(1)
             followerTab?.let {
                 performViewClick(followerTab)
+                addLogToTv("点击选中Followers页")
             }
         } catch (e : Exception) {
             e.printStackTrace()
@@ -158,6 +209,7 @@ class AutoGetPacketService : BaseAccessibilityService() {
             autoGetTheirFans = false
 //            ToastUtil.show("自动关注完毕，已自动关注${followedCount}人")
             Log.e("follow","自动关注完毕，已自动关注${followedCount}人")
+            addLogToTv("关注完毕，已关注${followedCount}人")
             return
         }
         try {
@@ -169,6 +221,7 @@ class AutoGetPacketService : BaseAccessibilityService() {
                         autoGetTheirFans = false
 //                        ToastUtil.show("自动关注完毕，已自动关注${followedCount}人")
                         Log.e("follow","..自动关注完毕，已自动关注${followedCount}人")
+                        addLogToTv("关注完毕，已关注${followedCount}人")
                         return
                     }
                     val item = it.getChild(i)
@@ -176,21 +229,22 @@ class AutoGetPacketService : BaseAccessibilityService() {
                         if (ii.childCount>2) {
                             val followUserNameTV = ii.getChild(0)
                             val followTV = ii.getChild(2)
-                            Log.e("follow","FOLLOWED_SET == "+Consts.FOLLOWED_SET)
+//                            Log.e("follow","FOLLOWED_SET == "+Consts.FOLLOWED_SET)
                             if (followUserNameTV != null && followTV != null) {
-                                val userNameTxt = followUserNameTV.text
+                                val userNameTxt = followUserNameTV.text?.toString()
                                 val followTxt = followTV.text
                                 if (!Consts.FOLLOWED_SET.contains(userNameTxt)) {
                                     followTxt?.let { value ->
                                         if ("Follow".endsWith(value,true)) {
                                             performViewClick(followTV)
                                             followedCount++
+                                            addLogToTv("已关注${followedCount}人")
 //                                            ToastUtil.show("已自动关注${followedCount}人")
-                                            Log.e("follow","before sleep")
-                                            Consts.FOLLOWED_SET.add(userNameTxt.toString())
+                                            Log.e("follow","followed before sleep")
+                                            Consts.FOLLOWED_SET.add(userNameTxt)
                                             Consts.KV?.encode(Consts.FOLLOWED_SET_KEY,Consts.FOLLOWED_SET)
-                                            Thread.sleep(FOLLOW_DELAY*1000L)
-                                            Log.e("follow","after sleep")
+                                            delay()
+                                            Log.e("follow","followed after sleep")
                                         }
                                     }
                                 } else {
@@ -203,9 +257,10 @@ class AutoGetPacketService : BaseAccessibilityService() {
                 //上滑
                 Log.e("follow","before scroll")
                 dispatchGesture(MainApplication.DIRECTION, "小视频")
-                Thread.sleep(FOLLOW_DELAY*1000L)
+                delay()
                 Log.e("follow","after scroll")
                 followTheirFollower()
+                Log.e("follow","loop done followTheirFollower")
             }
         } catch (e : Exception) {
             e.printStackTrace()
@@ -311,8 +366,10 @@ class AutoGetPacketService : BaseAccessibilityService() {
         const val AUTO_RANDOM_PLAY = 902
         var autoWatchVideo = false
         var autoGetTheirFans = false
+        var autoGetTheirFansJobFlag = -1 //-1 未开始 0点击开始 1已开始 2已结束
         val TIK_TOK = "com.zhiliaoapp.musically"
         var TOTAL_FOLLOW_COUNT = 100
+        var followedCount = 0
         var FOLLOW_DELAY = 5
     }
 

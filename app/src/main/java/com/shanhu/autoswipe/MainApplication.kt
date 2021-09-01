@@ -3,7 +3,9 @@ package com.shanhu.autoswipe
 import android.app.Activity
 import android.app.Application
 import android.util.Log
+import com.lzf.easyfloat.EasyFloat
 import com.shanhu.autoswipe.service.AutoGetPacketService
+import com.shanhu.autoswipe.util.CollectionUtils
 import com.shanhu.autoswipe.util.SpUtil
 import com.tencent.mmkv.MMKV
 
@@ -15,11 +17,15 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         mAppContext = this
+        EasyFloat.init(this, false)
         val rootDir = MMKV.initialize(this)
         println("mmkv root: $rootDir")
         Consts.KV = MMKV.defaultMMKV()
         Consts.FOLLOWED_SET = Consts.KV?.decodeStringSet(Consts.FOLLOWED_SET_KEY,HashSet()) as HashSet<String?>
         Log.e("MainApplication","FOLLOWED_SET == "+Consts.FOLLOWED_SET)
+        val profileLinks = Consts.KV?.decodeString(Consts.TARGET_PROFILE_LINKS,"") ?: ""
+        Consts.TARGET_PROFILE_LINKS_LIST = CollectionUtils.string2Array(profileLinks)
+        Log.e("MainApplication","TARGET_PROFILE_LINKS_LIST  == "+(Consts.TARGET_PROFILE_LINKS_LIST?.size?:0))
         AutoGetPacketService.TOTAL_FOLLOW_COUNT = Consts.KV?.decodeInt(Consts.TOTAL_FOLLOW_COUNT,AutoGetPacketService.TOTAL_FOLLOW_COUNT)?:AutoGetPacketService.TOTAL_FOLLOW_COUNT
         AutoGetPacketService.FOLLOW_DELAY = Consts.KV?.decodeInt(Consts.FOLLOW_DELAY,AutoGetPacketService.FOLLOW_DELAY)?:AutoGetPacketService.FOLLOW_DELAY
 
