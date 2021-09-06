@@ -41,4 +41,10 @@
         android:layout_height="wrap_content"
         layout="@layout/item_config"
         android:visibility="gone"/>
+    <include
+        android:id="@+id/configSix"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/item_config"
+        android:visibility="gone"/>
 </LinearLayout>

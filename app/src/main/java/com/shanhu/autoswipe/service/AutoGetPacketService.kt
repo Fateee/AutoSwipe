@@ -113,6 +113,7 @@ class AutoGetPacketService : BaseAccessibilityService() {
                     ThreadManager.get().execute {
 //                        addLogToTv("开始执行任务")
                         if (autoGetTheirFansJobFlag > 1) return@execute
+                        delay()
                         openProfile()
                         delay()
                         getFollowerList()
@@ -124,6 +125,25 @@ class AutoGetPacketService : BaseAccessibilityService() {
                         autoGetTheirFansJobFlag = 2
                     }
                 }
+                if (Consts.autoForwardMsgs && Consts.autoForwardMsgsJobFlag == 0) {
+                    Consts.autoForwardMsgsJobFlag = 1
+                    ThreadManager.get().execute {
+//                        addLogToTv("开始执行任务")
+                        if (Consts.autoForwardMsgsJobFlag > 1) return@execute
+                        delay()
+                        openForwardProfile()
+                        delay()
+                        openForwardMsgChat()
+                        Log.e("forward", "before sleep execute forward msg")
+                        delay()
+                        Log.e("forward", "after sleep execute forward msg")
+                        longClickAndForwardMsg()
+
+                        Log.e("forward", "all done execute forward msg")
+//                        chooseForwardPeople()
+                        Consts.autoForwardMsgsJobFlag = 2
+                    }
+                }
             }
             else -> {
                 autoWatchVideo = SpUtil.getInstace().getBoolean(MainApplication.AUTO_PLAY, false)
@@ -131,6 +151,52 @@ class AutoGetPacketService : BaseAccessibilityService() {
                     swipeDelay()
                 }
             }
+        }
+    }
+
+    private fun chooseForwardPeople() {
+
+    }
+
+    private fun longClickAndForwardMsg() {
+        val node = findViewByText(Consts.FORWARD_WORD)
+        val parent = node?.parent
+        if (parent != null) {
+            performViewLongClick(parent)
+            delay()
+            val forwardNode = findViewByText("Forward",true)
+            forwardNode?.let {
+                performViewClick(it)
+                delay()
+                val selectBt = getRoot()?.getChild(2)
+                selectBt?.let { select->
+                    performViewClick(select)
+                }
+            }
+        }
+    }
+
+    private fun openForwardMsgChat() {
+        try {
+//            val chatBt = getRoot()?.getChild(0)?.getChild(6)
+            val chatBt = findViewByText("Message",true)
+            chatBt?.let {
+                performViewClick(chatBt)
+                addLogToTv("点击进入聊天")
+            }
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun openForwardProfile() {
+        if (Consts.FORWARD_PROFILE_LINKS_VALUE.isEmpty()) return
+        val url = Consts.FORWARD_PROFILE_LINKS_VALUE
+        Log.e(TAG, "url: $url")
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        MainApplication.mAppContext?.let {
+            ContextCompat.startActivity(it,intent,null)
         }
     }
 

@@ -95,6 +95,9 @@ class HomeFragment : Fragment() {
                 AutoGetPacketService.followedCount = 0
                 AutoGetPacketService.autoGetTheirFansJobFlag = 0
             }
+            if (Consts.autoForwardMsgs) {
+                Consts.autoForwardMsgsJobFlag = 0
+            }
         },5000)
     }
 

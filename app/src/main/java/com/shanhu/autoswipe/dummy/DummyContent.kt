@@ -29,27 +29,28 @@ object DummyContent {
 //            addItem(createDummyItem(i))
 //        }
         addItem(DummyItem(false, "自动养号"))
-        addItem(DummyItem(false, "自动发布"))
+//        addItem(DummyItem(false, "自动发布"))
         addItem(DummyItem(AutoGetPacketService.autoGetTheirFans, "批量关注他人粉丝"))
-        addItem(DummyItem(false, "批量回关粉丝"))
-        addItem(DummyItem(false, "批量私信粉丝(需互关)"))
+//        addItem(DummyItem(false, "批量回关粉丝"))
+//        addItem(DummyItem(false, "批量私信粉丝(需互关)"))
         addItem(DummyItem(false, "批量转发聊天内容"))
 
         val items = LinkedHashMap<String,String>()
         items["他人主页链接"] = Consts.KV?.decodeString(Consts.TARGET_PROFILE_LINKS,"") ?: ""
         items["关注数量"] = Consts.KV?.decodeInt(Consts.TOTAL_FOLLOW_COUNT,AutoGetPacketService.TOTAL_FOLLOW_COUNT).toString()
-        items["间隔秒数"] = Consts.KV?.decodeInt(Consts.FOLLOW_DELAY,AutoGetPacketService.FOLLOW_DELAY).toString()
+        items["关注间隔秒数"] = Consts.KV?.decodeInt(Consts.FOLLOW_DELAY,AutoGetPacketService.FOLLOW_DELAY).toString()
         val maps = HashMap<String,LinkedHashMap<String,String>>()
         maps["批量关注他人粉丝"] = items
         ITEM_MAP.add(maps)
 //        ITEM_MAP["my_follow_back"] = items
 
         val itemss = LinkedHashMap<String,String>()
-        itemss["转发总人数"] = "20"
-        itemss["每次转发人数"] = "15"
-        itemss["间隔秒数"] = "30"
-        itemss["转发内容关键字"] = "Answer"
-        itemss["附带留言"] = ""
+        itemss["转发人主页"] = Consts.KV?.decodeString(Consts.FORWARD_PROFILE_LINKS_KEY,"") ?: ""
+        itemss["转发总人数"] = Consts.TOTAL_FORWARD_COUNT?.toString() ?:"150"
+        itemss["每次转发人数"] = Consts.PER_FORWARD_COUNT?.toString() ?: "15"
+        itemss["转发间隔秒数"] = Consts.PER_FORWARD_DELAY?.toString() ?: "30"
+        itemss["转发内容关键字"] = Consts.FORWARD_WORD ?: ""
+        itemss["附带留言"] = Consts.FORWARD_WORD_TIP ?:""
         val mapss = HashMap<String,LinkedHashMap<String,String>>()
         mapss["批量转发聊天内容"] = itemss
         ITEM_MAP.add(mapss)

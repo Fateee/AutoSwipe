@@ -202,6 +202,17 @@ open class BaseAccessibilityService : AccessibilityService(), IAccessbilityActio
         }
     }
 
+    fun performViewLongClick(nodeInfo: AccessibilityNodeInfo?) {
+        var node: AccessibilityNodeInfo? = nodeInfo ?: return
+        while (node != null) {
+            if (node.isLongClickable) {
+                node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)
+                break
+            }
+            node = node.parent
+        }
+    }
+
     fun performViewClickByRect(nodeInfo: AccessibilityNodeInfo?){
         if (nodeInfo != null) {
             val rectScreen = Rect()

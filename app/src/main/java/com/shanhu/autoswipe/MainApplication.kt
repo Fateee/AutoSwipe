@@ -26,6 +26,16 @@ class MainApplication : Application() {
         val profileLinks = Consts.KV?.decodeString(Consts.TARGET_PROFILE_LINKS,"") ?: ""
         Consts.TARGET_PROFILE_LINKS_LIST = CollectionUtils.string2Array(profileLinks)
         Log.e("MainApplication","TARGET_PROFILE_LINKS_LIST  == "+(Consts.TARGET_PROFILE_LINKS_LIST?.size?:0))
+
+        Consts.FORWARD_PROFILE_LINKS_VALUE = Consts.KV?.decodeString(Consts.FORWARD_PROFILE_LINKS_KEY,"https://vm.tiktok.com/ZMRDC7DpP/") ?: "https://vm.tiktok.com/ZMRDC7DpP/"
+        Log.e("MainApplication","FORWARD_PROFILE_LINKS_VALUE  == "+Consts.FORWARD_PROFILE_LINKS_VALUE)
+
+        Consts.TOTAL_FORWARD_COUNT = Consts.KV?.decodeInt(Consts.TOTAL_FORWARD_COUNT_KEY,Consts.TOTAL_FORWARD_COUNT?:100) ?: 150
+        Consts.PER_FORWARD_COUNT = Consts.KV?.decodeInt(Consts.PER_FORWARD_COUNT_KEY,Consts.PER_FORWARD_COUNT?:15) ?: 15
+        Consts.PER_FORWARD_DELAY = Consts.KV?.decodeInt(Consts.PER_FORWARD_DELAY_KEY,Consts.PER_FORWARD_DELAY?:15) ?: 15
+        Consts.FORWARD_WORD = Consts.KV?.decodeString(Consts.FORWARD_WORD_KEY,"Dear") ?: "Dear"
+        Consts.FORWARD_WORD_TIP = Consts.KV?.decodeString(Consts.FORWARD_WORD_TIP_KEY,"") ?: ""
+
         AutoGetPacketService.TOTAL_FOLLOW_COUNT = Consts.KV?.decodeInt(Consts.TOTAL_FOLLOW_COUNT,AutoGetPacketService.TOTAL_FOLLOW_COUNT)?:AutoGetPacketService.TOTAL_FOLLOW_COUNT
         AutoGetPacketService.FOLLOW_DELAY = Consts.KV?.decodeInt(Consts.FOLLOW_DELAY,AutoGetPacketService.FOLLOW_DELAY)?:AutoGetPacketService.FOLLOW_DELAY
 

@@ -23,12 +23,18 @@ class MyItemRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
-        holder.itemName.isChecked = AutoGetPacketService.autoGetTheirFans
         holder.itemName.text = item.content
         when(item.content) {
             "批量关注他人粉丝" -> {
+                holder.itemName.isChecked = AutoGetPacketService.autoGetTheirFans
                 holder.itemName.setOnCheckedChangeListener { _, isChecked ->
                     AutoGetPacketService.autoGetTheirFans = isChecked
+                }
+            }
+            "批量转发聊天内容" -> {
+                holder.itemName.isChecked = Consts.autoForwardMsgs
+                holder.itemName.setOnCheckedChangeListener { _, isChecked ->
+                    Consts.autoForwardMsgs = isChecked
                 }
             }
         }
